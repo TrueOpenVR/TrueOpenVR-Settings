@@ -1,2 +1,2 @@
-# AllVR-Settings
-Settings app for AllVR
+# TrueOpenVr Settings
+Settings app for TrueOpenVR
