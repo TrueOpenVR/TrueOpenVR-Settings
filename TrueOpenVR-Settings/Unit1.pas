@@ -74,7 +74,7 @@ begin
   EdtWidth.Text:=IntToStr(Ini.ReadInteger('VRInit', 'UserWidth', 1280));
   EdtHeight.Text:=IntToStr(Ini.ReadInteger('VRInit', 'UserHeight', 720));
 
-  if FindFirst(ExtractFilePath(ParamStr(0)) + 'Plugins\*.dll', faAnyFile, SR) = 0 then
+  if FindFirst(ExtractFilePath(ParamStr(0)) + 'Drivers\*.dll', faAnyFile, SR) = 0 then
    begin
      repeat
        if (SR.Attr <> faDirectory) then
