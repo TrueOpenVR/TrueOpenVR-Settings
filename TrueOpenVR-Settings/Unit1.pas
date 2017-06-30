@@ -87,7 +87,7 @@ begin
 
   CBChsPlugin.ItemIndex:=0;
 
-  PluginPath:=Ini.ReadString('Plugin', 'Path', '');
+  PluginPath:=Ini.ReadString('Driver', 'Path', '');
 
   for i:=0 to CBChsPlugin.Items.Count - 1 do
     if CBChsPlugin.Items.Strings[i] = PluginPath then CBChsPlugin.ItemIndex:=i;
@@ -111,7 +111,7 @@ begin
    Ini.WriteBool('VRInit', 'Scale', CBScale.Checked);
    Ini.WriteString('VRInit', 'UserWidth', EdtWidth.Text);
    Ini.WriteString('VRInit', 'UserHeight', EdtHeight.Text);
-   Ini.WriteString('Plugin', 'Path', CBChsPlugin.Items.Strings[CBChsPlugin.ItemIndex]);
+   Ini.WriteString('Driver', 'Path', CBChsPlugin.Items.Strings[CBChsPlugin.ItemIndex]);
    Ini.Free;
    Close;
 end;
