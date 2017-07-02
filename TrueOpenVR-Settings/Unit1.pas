@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, XPMan, ComCtrls, Registry, IniFiles;
+  Dialogs, StdCtrls, XPMan, ComCtrls, Registry;
 
 type
   TMain = class(TForm)
@@ -17,10 +17,14 @@ type
     ScrIndLbl: TLabel;
     ResLbl: TLabel;
     EdtWidth: TEdit;
-    Label4: TLabel;
+    ResXLbl: TLabel;
     EdtHeight: TEdit;
     ChsPlugin: TLabel;
-    CBChsPlugin: TComboBox;
+    CBChsDriver: TComboBox;
+    RendLbl: TLabel;
+    RendXLbl: TLabel;
+    EdtRendWidth: TEdit;
+    EdtRendHeight: TEdit;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
@@ -45,12 +49,14 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 var
-  Reg: TRegistry; Ini: TIniFile; i, ScreenIndex: integer; SR: TSearchRec; PluginPath: string;
+  Reg: TRegistry; i, ScreenIndex: integer; SR: TSearchRec; DriverPath: string;
 begin
   Application.Title:=Caption;
 
   SetWindowLong(EdtWidth.Handle, GWL_STYLE, GetWindowLong(EdtWidth.Handle, GWL_STYLE) or ES_NUMBER);
   SetWindowLong(EdtHeight.Handle, GWL_STYLE, GetWindowLong(EdtHeight.Handle, GWL_STYLE) or ES_NUMBER);
+  SetWindowLong(EdtRendWidth.Handle, GWL_STYLE, GetWindowLong(EdtRendWidth.Handle, GWL_STYLE) or ES_NUMBER);
+  SetWindowLong(EdtRendHeight.Handle, GWL_STYLE, GetWindowLong(EdtRendHeight.Handle, GWL_STYLE) or ES_NUMBER);
 
   TrackBar.Max:=Screen.MonitorCount;
   if Screen.MonitorCount = 1 then TrackBar.Enabled:=false;
@@ -58,41 +64,48 @@ begin
   Reg:=TRegistry.Create;
   Reg.RootKey:=HKEY_CURRENT_USER;
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
-     Reg.WriteString('Path', ExtractFilePath(ParamStr(0)));
-     Reg.CloseKey;
+    Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
+
+    try
+      CBScale.Checked:=Reg.ReadBool('Scale');
+      ScreenIndex:=Reg.ReadInteger('ScreenIndex');
+      EdtWidth.Text:=IntToStr(Reg.ReadInteger('UserWidth'));
+      EdtHeight.Text:=IntToStr(Reg.ReadInteger('UserHeight'));
+      EdtRendWidth.Text:=IntToStr(Reg.ReadInteger('RenderWidth'));
+      EdtRendHeight.Text:=IntToStr(Reg.ReadInteger('RenderHeight'));
+      DriverPath:=Reg.ReadString('Driver');
+    except
+      CBScale.Checked:=true;
+      ScreenIndex:=1;
+      EdtWidth.Text:=IntToStr(Screen.Monitors[0].Width);
+      EdtHeight.Text:=IntToStr(Screen.Monitors[0].Height);
+      EdtRendWidth.Text:=EdtWidth.Text;
+      EdtRendHeight.Text:=EdtHeight.Text;
+      DriverPath:='';
+    end;
+
+    Reg.CloseKey;
    end;
   Reg.Free;
 
-  Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'TOVR.ini');
-
-  if Ini.ReadBool('VRInit', 'Scale', false) = true then CBScale.Checked:=true;
-
-  ScreenIndex:=Ini.ReadInteger('VRInit', 'ScreenIndex', 1);
   if ScreenIndex>=TrackBar.Max then TrackBar.Position:=ScreenIndex;
   ScrIndLbl.Caption:=IntToStr(TrackBar.Position);
-
-  EdtWidth.Text:=IntToStr(Ini.ReadInteger('VRInit', 'UserWidth', 1280));
-  EdtHeight.Text:=IntToStr(Ini.ReadInteger('VRInit', 'UserHeight', 720));
 
   if FindFirst(ExtractFilePath(ParamStr(0)) + 'Drivers\*.dll', faAnyFile, SR) = 0 then
    begin
      repeat
        if (SR.Attr <> faDirectory) then
        begin
-         CBChsPlugin.Items.Add(SR.Name);
+         CBChsDriver.Items.Add(SR.Name);
        end;
      until FindNext(SR) <> 0;
      FindClose(SR);
    end;
 
-  CBChsPlugin.ItemIndex:=0;
+  CBChsDriver.ItemIndex:=0;
 
-  PluginPath:=Ini.ReadString('Driver', 'Path', '');
-
-  for i:=0 to CBChsPlugin.Items.Count - 1 do
-    if CBChsPlugin.Items.Strings[i] = PluginPath then CBChsPlugin.ItemIndex:=i;
-
-  Ini.Free;
+  for i:=0 to CBChsDriver.Items.Count - 1 do
+    if CBChsDriver.Items.Strings[i] = ExtractFileName(DriverPath) then CBChsDriver.ItemIndex:=i;
 end;
 
 procedure TMain.TrackBarChange(Sender: TObject);
@@ -104,16 +117,23 @@ end;
 
 procedure TMain.ApplyBtnClick(Sender: TObject);
 var
-  Ini: TIniFile;
+  Reg: TRegistry;
 begin
-   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'TOVR.ini');
-   Ini.WriteInteger('VRInit', 'ScreenIndex', TrackBar.Position);
-   Ini.WriteBool('VRInit', 'Scale', CBScale.Checked);
-   Ini.WriteString('VRInit', 'UserWidth', EdtWidth.Text);
-   Ini.WriteString('VRInit', 'UserHeight', EdtHeight.Text);
-   Ini.WriteString('Driver', 'Path', CBChsPlugin.Items.Strings[CBChsPlugin.ItemIndex]);
-   Ini.Free;
-   Close;
+  Reg:=TRegistry.Create;
+  Reg.RootKey:=HKEY_CURRENT_USER;
+  if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
+     Reg.WriteInteger('ScreenIndex', TrackBar.Position);
+     Reg.WriteBool('Scale', CBScale.Checked);
+     Reg.WriteInteger('UserWidth', StrToInt(EdtWidth.Text));
+     Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
+     Reg.WriteInteger('RenderWidth', StrToInt(EdtRendWidth.Text));
+     Reg.WriteInteger('RenderHeight', StrToInt(EdtRendHeight.Text));
+     Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
+     Reg.WriteString('Driver', ExtractFilePath(ParamStr(0)) + 'Drivers\' + CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]);
+     Reg.CloseKey;
+   end;
+  Reg.Free;
+  Close;
 end;
 
 end.
