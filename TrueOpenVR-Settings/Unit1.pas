@@ -49,7 +49,7 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 var
-  Reg: TRegistry; i, ScreenIndex: integer; SR: TSearchRec; DriverPath: string;
+  Reg: TRegistry; i, ScreenIndex: integer; SR: TSearchRec; DriverName: string;
 begin
   Application.Title:=Caption;
 
@@ -73,7 +73,7 @@ begin
       EdtHeight.Text:=IntToStr(Reg.ReadInteger('UserHeight'));
       EdtRendWidth.Text:=IntToStr(Reg.ReadInteger('RenderWidth'));
       EdtRendHeight.Text:=IntToStr(Reg.ReadInteger('RenderHeight'));
-      DriverPath:=Reg.ReadString('Driver');
+      DriverName:=Reg.ReadString('Driver');
     except
       CBScale.Checked:=true;
       ScreenIndex:=1;
@@ -81,7 +81,7 @@ begin
       EdtHeight.Text:=IntToStr(Screen.Monitors[0].Height);
       EdtRendWidth.Text:=EdtWidth.Text;
       EdtRendHeight.Text:=EdtHeight.Text;
-      DriverPath:='';
+      DriverName:='';
     end;
 
     Reg.CloseKey;
@@ -105,7 +105,7 @@ begin
   CBChsDriver.ItemIndex:=0;
 
   for i:=0 to CBChsDriver.Items.Count - 1 do
-    if CBChsDriver.Items.Strings[i] = ExtractFileName(DriverPath) then CBChsDriver.ItemIndex:=i;
+    if CBChsDriver.Items.Strings[i] = DriverName then CBChsDriver.ItemIndex:=i;
 end;
 
 procedure TMain.TrackBarChange(Sender: TObject);
@@ -128,8 +128,9 @@ begin
      Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
      Reg.WriteInteger('RenderWidth', StrToInt(EdtRendWidth.Text));
      Reg.WriteInteger('RenderHeight', StrToInt(EdtRendHeight.Text));
+     Reg.WriteString('Driver', CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]);
      Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
-     Reg.WriteString('Driver', ExtractFilePath(ParamStr(0)) + 'Drivers\' + CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]);
+     Reg.WriteString('Drivers', ExtractFilePath(ParamStr(0)) + 'Drivers\');
      Reg.CloseKey;
    end;
   Reg.Free;
