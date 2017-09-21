@@ -155,7 +155,7 @@ object Main: TMain
     Top = 80
     Width = 208
     Height = 33
-    Max = 240
+    Max = 220
     Min = 80
     Frequency = 10
     Position = 90
