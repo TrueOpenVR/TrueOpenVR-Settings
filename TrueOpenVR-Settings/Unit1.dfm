@@ -4,7 +4,7 @@ object Main: TMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'TrueOpenVR Settings'
-  ClientHeight = 234
+  ClientHeight = 271
   ClientWidth = 275
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -33,42 +33,49 @@ object Main: TMain
   end
   object ResLbl: TLabel
     Left = 8
-    Top = 88
+    Top = 120
     Width = 106
     Height = 13
     Caption = 'User resolution for VR:'
   end
   object ResXLbl: TLabel
     Left = 209
-    Top = 87
+    Top = 119
     Width = 5
     Height = 13
     Caption = 'x'
   end
   object ChsPlugin: TLabel
     Left = 8
-    Top = 168
+    Top = 200
     Width = 89
     Height = 13
     Caption = 'Choose VR driver: '
   end
   object RendLbl: TLabel
     Left = 8
-    Top = 128
+    Top = 160
     Width = 119
     Height = 13
     Caption = 'Render resolution for VR:'
   end
   object RendXLbl: TLabel
     Left = 209
-    Top = 127
+    Top = 159
     Width = 5
     Height = 13
     Caption = 'x'
   end
+  object FOVLbl: TLabel
+    Left = 8
+    Top = 84
+    Width = 39
+    Height = 13
+    Caption = 'FOV: 90'
+  end
   object ApplyBtn: TButton
     Left = 8
-    Top = 200
+    Top = 240
     Width = 75
     Height = 25
     Caption = 'Apply'
@@ -77,7 +84,7 @@ object Main: TMain
   end
   object ExitBtn: TButton
     Left = 88
-    Top = 200
+    Top = 240
     Width = 75
     Height = 25
     Caption = 'Close'
@@ -104,7 +111,7 @@ object Main: TMain
   end
   object EdtWidth: TEdit
     Left = 160
-    Top = 85
+    Top = 117
     Width = 41
     Height = 21
     TabOrder = 4
@@ -112,7 +119,7 @@ object Main: TMain
   end
   object EdtHeight: TEdit
     Left = 223
-    Top = 85
+    Top = 117
     Width = 41
     Height = 21
     TabOrder = 5
@@ -120,7 +127,7 @@ object Main: TMain
   end
   object CBChsDriver: TComboBox
     Left = 104
-    Top = 164
+    Top = 196
     Width = 161
     Height = 21
     Style = csDropDownList
@@ -129,7 +136,7 @@ object Main: TMain
   end
   object EdtRendWidth: TEdit
     Left = 160
-    Top = 125
+    Top = 157
     Width = 41
     Height = 21
     TabOrder = 7
@@ -137,14 +144,26 @@ object Main: TMain
   end
   object EdtRendHeight: TEdit
     Left = 223
-    Top = 125
+    Top = 157
     Width = 41
     Height = 21
     TabOrder = 8
     Text = '0'
   end
+  object FovBar: TTrackBar
+    Left = 64
+    Top = 80
+    Width = 208
+    Height = 33
+    Max = 240
+    Min = 80
+    Frequency = 10
+    Position = 90
+    TabOrder = 9
+    OnChange = FovBarChange
+  end
   object XPManifest1: TXPManifest
-    Left = 240
-    Top = 192
+    Left = 136
+    Top = 8
   end
 end

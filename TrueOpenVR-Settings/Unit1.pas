@@ -25,10 +25,13 @@ type
     RendXLbl: TLabel;
     EdtRendWidth: TEdit;
     EdtRendHeight: TEdit;
+    FOVLbl: TLabel;
+    FovBar: TTrackBar;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
     procedure ApplyBtnClick(Sender: TObject);
+    procedure FovBarChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -69,6 +72,8 @@ begin
     try
       CBScale.Checked:=Reg.ReadBool('Scale');
       ScreenIndex:=Reg.ReadInteger('ScreenIndex');
+      FovBar.Position:=Reg.ReadInteger('FOV');
+      FOVLbl.Caption:='FOV: ' + IntToStr(FovBar.Position);
       EdtWidth.Text:=IntToStr(Reg.ReadInteger('UserWidth'));
       EdtHeight.Text:=IntToStr(Reg.ReadInteger('UserHeight'));
       EdtRendWidth.Text:=IntToStr(Reg.ReadInteger('RenderWidth'));
@@ -124,6 +129,7 @@ begin
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
      Reg.WriteInteger('ScreenIndex', TrackBar.Position);
      Reg.WriteBool('Scale', CBScale.Checked);
+     Reg.WriteInteger('FOV', FovBar.Position);
      Reg.WriteInteger('UserWidth', StrToInt(EdtWidth.Text));
      Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
      Reg.WriteInteger('RenderWidth', StrToInt(EdtRendWidth.Text));
@@ -135,6 +141,11 @@ begin
    end;
   Reg.Free;
   Close;
+end;
+
+procedure TMain.FovBarChange(Sender: TObject);
+begin
+  FOVLbl.Caption:='FOV: ' + IntToStr(FovBar.Position);
 end;
 
 end.
