@@ -170,6 +170,15 @@ object Main: TMain
     Caption = 'Auto enable and disable VR screen'
     TabOrder = 1
   end
+  object Button1: TButton
+    Left = 240
+    Top = 216
+    Width = 27
+    Height = 25
+    Caption = '?'
+    TabOrder = 11
+    OnClick = Button1Click
+  end
   object XPManifest1: TXPManifest
     Left = 232
     Top = 49

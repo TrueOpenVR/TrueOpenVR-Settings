@@ -28,11 +28,13 @@ type
     FOVLbl: TLabel;
     FovBar: TTrackBar;
     CBScrControl: TCheckBox;
+    Button1: TButton;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
     procedure ApplyBtnClick(Sender: TObject);
     procedure FovBarChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -53,7 +55,7 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 var
-  Reg: TRegistry; i, ScreenIndex: integer; SR: TSearchRec; DriverName: string;
+  Reg: TRegistry; i, ScreenIndex: integer; SR: TSearchRec; DriverName, Driver64Name: string;
 begin
   Application.Title:=Caption;
 
@@ -65,12 +67,9 @@ begin
   Reg:=TRegistry.Create;
   Reg.RootKey:=HKEY_CURRENT_USER;
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
-    Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
-    Reg.WriteString('Library64', ExtractFilePath(ParamStr(0)) + 'TOVRx64.dll');
-
     try
       ScreenIndex:=Reg.ReadInteger('ScreenIndex');
-
+    
       TrackBar.Max:=Screen.MonitorCount;
       if ScreenIndex > TrackBar.Max then
         TrackBar.Max:=ScreenIndex;
@@ -88,6 +87,7 @@ begin
       EdtRendWidth.Text:=IntToStr(Reg.ReadInteger('RenderWidth'));
       EdtRendHeight.Text:=IntToStr(Reg.ReadInteger('RenderHeight'));
       DriverName:=Reg.ReadString('Driver');
+      Driver64Name:=Reg.ReadString('Driver64');
     except
       CBScale.Checked:=false;
       CBScrControl.Checked:=true;
@@ -97,6 +97,7 @@ begin
       EdtRendWidth.Text:=EdtWidth.Text;
       EdtRendHeight.Text:=EdtHeight.Text;
       DriverName:='';
+      Driver64Name:='';
     end;
 
     Reg.CloseKey;
@@ -109,7 +110,10 @@ begin
      repeat
        if (SR.Attr <> faDirectory) then
        begin
-         CBChsDriver.Items.Add(SR.Name);
+          if Copy(SR.Name, Length(SR.Name) - 5, 2) <> '64' then
+            CBChsDriver.Items.Add(Copy(SR.Name, 1, Length(SR.Name) - 4))
+          else if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + Copy(SR.Name, 1, Length(SR.Name) - 6) + '.dll') = false then //if not found 32-bit driver then show only 64-bit
+            CBChsDriver.Items.Add(Copy(SR.Name, 1, Length(SR.Name) - 4));
        end;
      until FindNext(SR) <> 0;
      FindClose(SR);
@@ -117,8 +121,9 @@ begin
 
   CBChsDriver.ItemIndex:=0;
 
+  if DriverName = '' then DriverName:=Driver64Name;
   for i:=0 to CBChsDriver.Items.Count - 1 do
-    if CBChsDriver.Items.Strings[i] = DriverName then CBChsDriver.ItemIndex:=i;
+    if CBChsDriver.Items.Strings[i] = Copy(DriverName, 1, Length(DriverName) - 4) then CBChsDriver.ItemIndex:=i;
 end;
 
 procedure TMain.TrackBarChange(Sender: TObject);
@@ -137,19 +142,34 @@ begin
   Reg:=TRegistry.Create;
   Reg.RootKey:=HKEY_CURRENT_USER;
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
-     Reg.WriteInteger('ScreenIndex', TrackBar.Position);
-     Reg.WriteBool('Scale', CBScale.Checked);
-     Reg.WriteBool('ScreenControl', CBScrControl.Checked);
-     Reg.WriteInteger('FOV', FovBar.Position);
-     Reg.WriteInteger('UserWidth', StrToInt(EdtWidth.Text));
-     Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
-     Reg.WriteInteger('RenderWidth', StrToInt(EdtRendWidth.Text));
-     Reg.WriteInteger('RenderHeight', StrToInt(EdtRendHeight.Text));
-     Reg.WriteString('Driver', CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]);
-     Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
-     Reg.WriteString('Drivers', ExtractFilePath(ParamStr(0)) + 'Drivers\');
-     Reg.CloseKey;
-   end;
+    Reg.WriteInteger('ScreenIndex', TrackBar.Position);
+    Reg.WriteBool('Scale', CBScale.Checked);
+    Reg.WriteBool('ScreenControl', CBScrControl.Checked);
+    Reg.WriteInteger('FOV', FovBar.Position);
+    Reg.WriteInteger('UserWidth', StrToInt(EdtWidth.Text));
+    Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
+    Reg.WriteInteger('RenderWidth', StrToInt(EdtRendWidth.Text));
+    Reg.WriteInteger('RenderHeight', StrToInt(EdtRendHeight.Text));
+
+    if Copy(CBChsDriver.Items.Strings[CBChsDriver.ItemIndex], Length(CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]) - 1, 2) <> '64' then begin
+      Reg.WriteString('Driver', CBChsDriver.Items.Strings[CBChsDriver.ItemIndex] + '.dll');
+      if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + CBChsDriver.Items.Strings[CBChsDriver.ItemIndex] + '64.dll') then
+        Reg.WriteString('Driver64', CBChsDriver.Items.Strings[CBChsDriver.ItemIndex] + '64.dll')
+      else
+        Reg.WriteString('Driver64', ''); //If not found 64-bit driver
+    end else if Copy(CBChsDriver.Items.Strings[CBChsDriver.ItemIndex], Length(CBChsDriver.Items.Strings[CBChsDriver.ItemIndex]) - 1, 2) = '64' then begin
+      Reg.WriteString('Driver', '');
+      Reg.WriteString('Driver64', CBChsDriver.Items.Strings[CBChsDriver.ItemIndex] + '.dll');
+    end else begin //Non-standard names are not accepted to avoid errors.
+      Reg.WriteString('Driver', '');
+      Reg.WriteString('Driver64', '');
+    end;
+
+    Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
+    Reg.WriteString('Library64', ExtractFilePath(ParamStr(0)) + 'TOVR64.dll');
+    Reg.WriteString('Drivers', ExtractFilePath(ParamStr(0)) + 'Drivers\');
+    Reg.CloseKey;
+  end;
   Reg.Free;
   Close;
 end;
@@ -157,6 +177,11 @@ end;
 procedure TMain.FovBarChange(Sender: TObject);
 begin
   FOVLbl.Caption:='FOV: ' + IntToStr(FovBar.Position);
+end;
+
+procedure TMain.Button1Click(Sender: TObject);
+begin
+  Application.MessageBox(PChar('TrueOpenVR' + #13#10 + 'https://github.com/TrueOpenVR' + #13#10 + 'r57zone@gmail.com'), PChar(Caption), 0);
 end;
 
 end.
