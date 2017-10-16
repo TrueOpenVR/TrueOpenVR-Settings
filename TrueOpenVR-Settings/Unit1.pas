@@ -27,6 +27,7 @@ type
     EdtRendHeight: TEdit;
     FOVLbl: TLabel;
     FovBar: TTrackBar;
+    CBScrControl: TCheckBox;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
@@ -61,17 +62,25 @@ begin
   SetWindowLong(EdtRendWidth.Handle, GWL_STYLE, GetWindowLong(EdtRendWidth.Handle, GWL_STYLE) or ES_NUMBER);
   SetWindowLong(EdtRendHeight.Handle, GWL_STYLE, GetWindowLong(EdtRendHeight.Handle, GWL_STYLE) or ES_NUMBER);
 
-  TrackBar.Max:=Screen.MonitorCount;
-  if Screen.MonitorCount = 1 then TrackBar.Enabled:=false;
-
   Reg:=TRegistry.Create;
   Reg.RootKey:=HKEY_CURRENT_USER;
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
     Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
+    Reg.WriteString('Library64', ExtractFilePath(ParamStr(0)) + 'TOVRx64.dll');
 
     try
-      CBScale.Checked:=Reg.ReadBool('Scale');
       ScreenIndex:=Reg.ReadInteger('ScreenIndex');
+
+      TrackBar.Max:=Screen.MonitorCount;
+      if ScreenIndex > TrackBar.Max then
+        TrackBar.Max:=ScreenIndex;
+      TrackBar.Position:=ScreenIndex;
+      if (Screen.MonitorCount < TrackBar.Position) or (Screen.MonitorCount = 1) then
+        TrackBar.Enabled:=false;
+      ScrIndLbl.Caption:=IntToStr(ScreenIndex);
+
+      CBScale.Checked:=Reg.ReadBool('Scale');
+      CBScrControl.Checked:=Reg.ReadBool('ScreenControl');
       FovBar.Position:=Reg.ReadInteger('FOV');
       FOVLbl.Caption:='FOV: ' + IntToStr(FovBar.Position);
       EdtWidth.Text:=IntToStr(Reg.ReadInteger('UserWidth'));
@@ -80,7 +89,8 @@ begin
       EdtRendHeight.Text:=IntToStr(Reg.ReadInteger('RenderHeight'));
       DriverName:=Reg.ReadString('Driver');
     except
-      CBScale.Checked:=true;
+      CBScale.Checked:=false;
+      CBScrControl.Checked:=true;
       ScreenIndex:=1;
       EdtWidth.Text:=IntToStr(Screen.Monitors[0].Width);
       EdtHeight.Text:=IntToStr(Screen.Monitors[0].Height);
@@ -93,8 +103,6 @@ begin
    end;
   Reg.Free;
 
-  if ScreenIndex>=TrackBar.Max then TrackBar.Position:=ScreenIndex;
-  ScrIndLbl.Caption:=IntToStr(TrackBar.Position);
 
   if FindFirst(ExtractFilePath(ParamStr(0)) + 'Drivers\*.dll', faAnyFile, SR) = 0 then
    begin
@@ -115,9 +123,11 @@ end;
 
 procedure TMain.TrackBarChange(Sender: TObject);
 begin
-  ScrIndLbl.Caption:=IntToStr(TrackBar.Position);
-  EdtWidth.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Width);
-  EdtHeight.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Height);
+  if TrackBar.Position <= Screen.MonitorCount then begin
+    ScrIndLbl.Caption:=IntToStr(TrackBar.Position);
+    EdtWidth.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Width);
+    EdtHeight.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Height);
+  end;
 end;
 
 procedure TMain.ApplyBtnClick(Sender: TObject);
@@ -129,6 +139,7 @@ begin
   if Reg.OpenKey('\Software\TrueOpenVR', true) then begin
      Reg.WriteInteger('ScreenIndex', TrackBar.Position);
      Reg.WriteBool('Scale', CBScale.Checked);
+     Reg.WriteBool('ScreenControl', CBScrControl.Checked);
      Reg.WriteInteger('FOV', FovBar.Position);
      Reg.WriteInteger('UserWidth', StrToInt(EdtWidth.Text));
      Reg.WriteInteger('UserHeight', StrToInt(EdtHeight.Text));
