@@ -178,6 +178,7 @@ begin
     Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
     Reg.WriteString('Library64', ExtractFilePath(ParamStr(0)) + 'TOVR64.dll');
     Reg.WriteString('Drivers', ExtractFilePath(ParamStr(0)) + 'Drivers\');
+    Reg.WriteString('HeadsetProfiles', ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\');
     Reg.CloseKey;
   end;
   Reg.Free;

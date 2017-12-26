@@ -20,14 +20,14 @@ object Main: TMain
   object ChsVRLbl: TLabel
     Left = 8
     Top = 9
-    Width = 56
+    Width = 91
     Height = 13
-    Caption = 'VR screen :'
+    Caption = 'VR screen number:'
   end
   object ScrIndLbl: TLabel
     Left = 223
     Top = 9
-    Width = 10
+    Width = 6
     Height = 13
     Caption = '1'
   end
