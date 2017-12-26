@@ -22,7 +22,7 @@ type
     RendHeightEdt: TEdit;
     CBScrControl: TCheckBox;
     AboutBtn: TButton;
-    LensDistortionProfileLbl: TLabel;
+    HeadsetProfileLbl: TLabel;
     ChsDistortionCB: TComboBox;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -111,7 +111,7 @@ begin
       ChsDriverCB.ItemIndex:=i;
 
 
-  if FindFirst(ExtractFilePath(ParamStr(0)) + 'DistortionProfiles\*.ini', faAnyFile, SR) = 0 then begin
+  if FindFirst(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\*.ini', faAnyFile, SR) = 0 then begin
     repeat
       if (SR.Attr <> faDirectory) then
         ChsDistortionCB.Items.Add(Copy(SR.Name, 1, Length(SR.Name) - 4))
@@ -148,9 +148,9 @@ begin
     Reg.WriteInteger('RenderWidth', StrToInt(RendWidthEdt.Text));
     Reg.WriteInteger('RenderHeight', StrToInt(RendHeightEdt.Text));
 
-    if FileExists(ExtractFilePath(ParamStr(0)) + 'DistortionProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini') then begin
+    if FileExists(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini') then begin
       Reg.WriteString('DistortionProfile', ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
-      Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'DistortionProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
+      Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
       Reg.WriteFloat('IPD', StrToFloat(StringReplace(Ini.ReadString('VR', 'IPD', '0.065'), '.', ',', [rfReplaceAll])));
       Reg.WriteFloat('DistortionK1', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K1', '0'), '.', ',', [rfReplaceAll])));
       Reg.WriteFloat('DistortionK2', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K2', '0'), '.', ',', [rfReplaceAll])));
