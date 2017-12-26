@@ -4,7 +4,7 @@ object Main: TMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'TrueOpenVR Settings'
-  ClientHeight = 250
+  ClientHeight = 192
   ClientWidth = 275
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -31,73 +31,51 @@ object Main: TMain
     Height = 13
     Caption = '1'
   end
-  object ResLbl: TLabel
+  object ChsDriverLbl: TLabel
     Left = 8
-    Top = 121
-    Width = 106
-    Height = 13
-    Caption = 'User resolution for VR:'
-  end
-  object ResXLbl: TLabel
-    Left = 210
-    Top = 120
-    Width = 5
-    Height = 13
-    Caption = 'x'
-  end
-  object ChsPlugin: TLabel
-    Left = 8
-    Top = 185
+    Top = 97
     Width = 89
     Height = 13
     Caption = 'Choose VR driver: '
   end
   object RendLbl: TLabel
     Left = 8
-    Top = 153
+    Top = 65
     Width = 119
     Height = 13
     Caption = 'Render resolution for VR:'
   end
   object RendXLbl: TLabel
-    Left = 210
-    Top = 152
+    Left = 202
+    Top = 64
     Width = 5
     Height = 13
     Caption = 'x'
   end
-  object FOVLbl: TLabel
+  object LensDistortionProfileLbl: TLabel
     Left = 8
-    Top = 85
-    Width = 39
+    Top = 128
+    Width = 102
     Height = 13
-    Caption = 'FOV: 90'
+    Caption = 'Lens distortion profile:'
   end
   object ApplyBtn: TButton
     Left = 8
-    Top = 216
+    Top = 160
     Width = 75
     Height = 25
     Caption = 'Apply'
-    TabOrder = 9
+    TabOrder = 5
     OnClick = ApplyBtnClick
   end
   object ExitBtn: TButton
     Left = 88
-    Top = 216
+    Top = 160
     Width = 75
     Height = 25
     Caption = 'Close'
-    TabOrder = 10
+    TabOrder = 6
     OnClick = ExitBtnClick
-  end
-  object CBScale: TCheckBox
-    Left = 8
-    Top = 57
-    Width = 113
-    Height = 17
-    Caption = 'Use image scaling'
-    TabOrder = 2
   end
   object TrackBar: TTrackBar
     Left = 191
@@ -109,58 +87,30 @@ object Main: TMain
     TabOrder = 0
     OnChange = TrackBarChange
   end
-  object EdtWidth: TEdit
-    Left = 161
-    Top = 118
-    Width = 41
-    Height = 21
-    TabOrder = 4
-    Text = '0'
-  end
-  object EdtHeight: TEdit
-    Left = 224
-    Top = 118
-    Width = 41
-    Height = 21
-    TabOrder = 5
-    Text = '0'
-  end
-  object CBChsDriver: TComboBox
-    Left = 104
-    Top = 181
-    Width = 161
+  object ChsDriverCB: TComboBox
+    Left = 120
+    Top = 93
+    Width = 145
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
-    TabOrder = 8
+    TabOrder = 4
   end
-  object EdtRendWidth: TEdit
-    Left = 161
-    Top = 150
+  object RendWidthEdt: TEdit
+    Left = 153
+    Top = 62
     Width = 41
     Height = 21
-    TabOrder = 6
+    TabOrder = 2
     Text = '0'
   end
-  object EdtRendHeight: TEdit
-    Left = 224
-    Top = 150
+  object RendHeightEdt: TEdit
+    Left = 216
+    Top = 62
     Width = 41
     Height = 21
-    TabOrder = 7
-    Text = '0'
-  end
-  object FovBar: TTrackBar
-    Left = 64
-    Top = 81
-    Width = 208
-    Height = 28
-    Max = 220
-    Min = 80
-    Frequency = 10
-    Position = 90
     TabOrder = 3
-    OnChange = FovBarChange
+    Text = '0'
   end
   object CBScrControl: TCheckBox
     Left = 8
@@ -170,17 +120,26 @@ object Main: TMain
     Caption = 'Auto enable and disable VR screen'
     TabOrder = 1
   end
-  object Button1: TButton
+  object AboutBtn: TButton
     Left = 240
-    Top = 216
+    Top = 160
     Width = 27
     Height = 25
     Caption = '?'
-    TabOrder = 11
-    OnClick = Button1Click
+    TabOrder = 7
+    OnClick = AboutBtnClick
   end
-  object XPManifest1: TXPManifest
-    Left = 232
-    Top = 49
+  object ChsDistortionCB: TComboBox
+    Left = 120
+    Top = 124
+    Width = 145
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 8
+  end
+  object XPManifest: TXPManifest
+    Left = 120
+    Top = 1
   end
 end
