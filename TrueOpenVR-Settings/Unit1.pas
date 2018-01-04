@@ -151,7 +151,7 @@ begin
     if FileExists(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini') then begin
       Reg.WriteString('DistortionProfile', ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
       Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
-      Reg.WriteFloat('IPD', StrToFloat(StringReplace(Ini.ReadString('VR', 'IPD', '0' + DecimalSeparator +'065'), '.', DecimalSeparator, [rfReplaceAll])));
+      Reg.WriteFloat('IPD', StrToFloat(StringReplace(Ini.ReadString('VR', 'IPD', '0.065'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK1', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K1', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK2', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K2', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistanceScaleX', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'DistanceScaleX', '1'), '.', DecimalSeparator, [rfReplaceAll])));
