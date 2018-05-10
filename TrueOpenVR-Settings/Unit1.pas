@@ -24,11 +24,15 @@ type
     AboutBtn: TButton;
     HeadsetProfileLbl: TLabel;
     ChsDistortionCB: TComboBox;
+    SupersamplingLbl: TLabel;
+    SupersamplingTB: TTrackBar;
+    SupersamplingNumLbl: TLabel;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
     procedure ApplyBtnClick(Sender: TObject);
     procedure AboutBtnClick(Sender: TObject);
+    procedure SupersamplingTBChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -111,7 +115,7 @@ begin
       ChsDriverCB.ItemIndex:=i;
 
 
-  if FindFirst(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\*.ini', faAnyFile, SR) = 0 then begin
+  if FindFirst(ExtractFilePath(ParamStr(0)) + 'HMDProfiles\*.ini', faAnyFile, SR) = 0 then begin
     repeat
       if (SR.Attr <> faDirectory) then
         ChsDistortionCB.Items.Add(Copy(SR.Name, 1, Length(SR.Name) - 4))
@@ -133,6 +137,7 @@ begin
     ScrIndLbl.Caption:=IntToStr(TrackBar.Position);
     RendWidthEdt.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Width);
     RendHeightEdt.Text:=IntToStr(Screen.Monitors[TrackBar.Position - 1].Height);
+    SupersamplingTB.Position:=10;
   end;
 end;
 
@@ -148,16 +153,16 @@ begin
     Reg.WriteInteger('RenderWidth', StrToInt(RendWidthEdt.Text));
     Reg.WriteInteger('RenderHeight', StrToInt(RendHeightEdt.Text));
 
-    if FileExists(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini') then begin
+    if FileExists(ExtractFilePath(ParamStr(0)) + 'HMDProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini') then begin
       Reg.WriteString('DistortionProfile', ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
-      Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
+      Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'HMDProfiles\' + ChsDistortionCB.Items.Strings[ChsDistortionCB.ItemIndex] + '.ini');
       Reg.WriteFloat('IPD', StrToFloat(StringReplace(Ini.ReadString('VR', 'IPD', '0.065'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK1', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K1', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK2', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K2', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistanceScaleX', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'DistanceScaleX', '1'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistanceScaleY', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'DistanceScaleY', '1'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('DistanceBetweenEyes', StrToFloat(StringReplace(Ini.ReadString('Display', 'DistanceBetweenEyes', '0'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('ScreenOffsetX', StrToFloat(StringReplace(Ini.ReadString('Display', 'ScreenOffsetX', '0'), '.', DecimalSeparator, [rfReplaceAll])));
+      Reg.WriteFloat('OffsetX', StrToFloat(StringReplace(Ini.ReadString('Display', 'OffsetX', '0'), '.', DecimalSeparator, [rfReplaceAll])));
+      Reg.WriteFloat('OffsetY', StrToFloat(StringReplace(Ini.ReadString('Display', 'OffsetY', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Ini.Free;
     end;
 
@@ -178,7 +183,7 @@ begin
     Reg.WriteString('Library', ExtractFilePath(ParamStr(0)) + 'TOVR.dll');
     Reg.WriteString('Library64', ExtractFilePath(ParamStr(0)) + 'TOVR64.dll');
     Reg.WriteString('Drivers', ExtractFilePath(ParamStr(0)) + 'Drivers\');
-    Reg.WriteString('HeadsetProfiles', ExtractFilePath(ParamStr(0)) + 'HeadsetProfiles\');
+    Reg.WriteString('HMDProfiles', ExtractFilePath(ParamStr(0)) + 'HMDProfiles\');
     Reg.CloseKey;
   end;
   Reg.Free;
@@ -188,6 +193,15 @@ end;
 procedure TMain.AboutBtnClick(Sender: TObject);
 begin
   Application.MessageBox(PChar('TrueOpenVR' + #13#10 + 'https://github.com/TrueOpenVR' + #13#10 + 'r57zone@gmail.com'), PChar(Caption), MB_ICONINFORMATION);
+end;
+
+procedure TMain.SupersamplingTBChange(Sender: TObject);
+begin
+  SupersamplingNumLbl.Caption:='x ' + StringReplace(FloatToStr(SupersamplingTB.Position * 0.1), DecimalSeparator, '.', [rfReplaceAll]);
+  if TrackBar.Position <= Screen.MonitorCount then begin
+    RendWidthEdt.Text:=IntToStr(Round(Screen.Monitors[TrackBar.Position - 1].Width * SupersamplingTB.Position * 0.1));
+    RendHeightEdt.Text:=IntToStr(Round(Screen.Monitors[TrackBar.Position - 1].Height * SupersamplingTB.Position * 0.1));
+  end;
 end;
 
 end.

@@ -4,7 +4,7 @@ object Main: TMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'TrueOpenVR Settings'
-  ClientHeight = 201
+  ClientHeight = 231
   ClientWidth = 243
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -33,7 +33,7 @@ object Main: TMain
   end
   object ChsDriverLbl: TLabel
     Left = 8
-    Top = 104
+    Top = 136
     Width = 34
     Height = 13
     Caption = 'Driver: '
@@ -54,27 +54,41 @@ object Main: TMain
   end
   object HeadsetProfileLbl: TLabel
     Left = 8
-    Top = 135
+    Top = 167
     Width = 74
     Height = 13
     Caption = 'Headset profile:'
   end
+  object SupersamplingLbl: TLabel
+    Left = 8
+    Top = 104
+    Width = 72
+    Height = 13
+    Caption = 'Supersampling:'
+  end
+  object SupersamplingNumLbl: TLabel
+    Left = 208
+    Top = 104
+    Width = 23
+    Height = 13
+    Caption = 'x 1.0'
+  end
   object ApplyBtn: TButton
     Left = 8
-    Top = 168
+    Top = 200
     Width = 75
     Height = 25
     Caption = 'Apply'
-    TabOrder = 5
+    TabOrder = 7
     OnClick = ApplyBtnClick
   end
   object ExitBtn: TButton
     Left = 88
-    Top = 168
+    Top = 200
     Width = 75
     Height = 25
     Caption = 'Close'
-    TabOrder = 6
+    TabOrder = 8
     OnClick = ExitBtnClick
   end
   object TrackBar: TTrackBar
@@ -89,12 +103,12 @@ object Main: TMain
   end
   object ChsDriverCB: TComboBox
     Left = 96
-    Top = 101
+    Top = 133
     Width = 137
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
-    TabOrder = 4
+    TabOrder = 5
   end
   object RendWidthEdt: TEdit
     Left = 129
@@ -122,21 +136,33 @@ object Main: TMain
   end
   object AboutBtn: TButton
     Left = 208
-    Top = 168
+    Top = 200
     Width = 27
     Height = 25
     Caption = '?'
-    TabOrder = 7
+    TabOrder = 9
     OnClick = AboutBtnClick
   end
   object ChsDistortionCB: TComboBox
     Left = 96
-    Top = 132
+    Top = 164
     Width = 137
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
-    TabOrder = 8
+    TabOrder = 6
+  end
+  object SupersamplingTB: TTrackBar
+    Left = 90
+    Top = 100
+    Width = 118
+    Height = 25
+    Max = 50
+    Min = 1
+    Frequency = 5
+    Position = 10
+    TabOrder = 4
+    OnChange = SupersamplingTBChange
   end
   object XPManifest: TXPManifest
     Left = 104
