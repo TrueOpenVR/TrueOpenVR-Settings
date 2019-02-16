@@ -68,7 +68,8 @@ begin
 
       //TrackBar.Max:=Screen.MonitorCount;
       //if ScreenIndex > TrackBar.Max then
-        TrackBar.Max:=ScreenIndex;
+
+      TrackBar.Max:=ScreenIndex;
       TrackBar.Position:=ScreenIndex;
       //if (Screen.MonitorCount < TrackBar.Position) or (Screen.MonitorCount = 1) then
         //TrackBar.Enabled:=false;
@@ -159,10 +160,8 @@ begin
       Reg.WriteFloat('IPD', StrToFloat(StringReplace(Ini.ReadString('VR', 'IPD', '0.065'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK1', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K1', '0'), '.', DecimalSeparator, [rfReplaceAll])));
       Reg.WriteFloat('DistortionK2', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'K2', '0'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('DistanceScaleX', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'DistanceScaleX', '1'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('DistanceScaleY', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'DistanceScaleY', '1'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('OffsetX', StrToFloat(StringReplace(Ini.ReadString('Display', 'OffsetX', '0'), '.', DecimalSeparator, [rfReplaceAll])));
-      Reg.WriteFloat('OffsetY', StrToFloat(StringReplace(Ini.ReadString('Display', 'OffsetY', '0'), '.', DecimalSeparator, [rfReplaceAll])));
+      Reg.WriteFloat('ScaleWidth', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'ScaleWidth', '100'), '.', DecimalSeparator, [rfReplaceAll])));
+      Reg.WriteFloat('ScaleHeight', StrToFloat(StringReplace(Ini.ReadString('Distortion', 'ScaleHeight', '100'), '.', DecimalSeparator, [rfReplaceAll])));
       Ini.Free;
     end;
 
