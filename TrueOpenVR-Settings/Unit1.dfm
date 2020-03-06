@@ -4,8 +4,8 @@ object Main: TMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'TrueOpenVR Settings'
-  ClientHeight = 231
-  ClientWidth = 243
+  ClientHeight = 232
+  ClientWidth = 241
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object Main: TMain
   PixelsPerInch = 96
   TextHeight = 13
   object ChsVRLbl: TLabel
-    Left = 8
+    Left = 9
     Top = 9
     Width = 91
     Height = 13
@@ -54,7 +54,7 @@ object Main: TMain
   end
   object HeadsetProfileLbl: TLabel
     Left = 8
-    Top = 167
+    Top = 169
     Width = 74
     Height = 13
     Caption = 'Headset profile:'
@@ -75,20 +75,20 @@ object Main: TMain
   end
   object ApplyBtn: TButton
     Left = 8
-    Top = 200
+    Top = 199
     Width = 75
     Height = 25
     Caption = 'Apply'
-    TabOrder = 7
+    TabOrder = 8
     OnClick = ApplyBtnClick
   end
   object ExitBtn: TButton
     Left = 88
-    Top = 200
+    Top = 199
     Width = 75
     Height = 25
     Caption = 'Close'
-    TabOrder = 8
+    TabOrder = 9
     OnClick = ExitBtnClick
   end
   object TrackBar: TTrackBar
@@ -104,11 +104,12 @@ object Main: TMain
   object ChsDriverCB: TComboBox
     Left = 96
     Top = 133
-    Width = 137
+    Width = 115
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
     TabOrder = 5
+    OnChange = ChsDriverCBChange
   end
   object RendWidthEdt: TEdit
     Left = 129
@@ -127,7 +128,7 @@ object Main: TMain
     Text = '0'
   end
   object CBScrControl: TCheckBox
-    Left = 8
+    Left = 9
     Top = 38
     Width = 193
     Height = 17
@@ -135,22 +136,22 @@ object Main: TMain
     TabOrder = 1
   end
   object AboutBtn: TButton
-    Left = 208
-    Top = 200
+    Left = 207
+    Top = 199
     Width = 27
     Height = 25
     Caption = '?'
-    TabOrder = 9
+    TabOrder = 10
     OnClick = AboutBtnClick
   end
   object ChsDistortionCB: TComboBox
     Left = 96
-    Top = 164
+    Top = 166
     Width = 137
     Height = 21
     Style = csDropDownList
     ItemHeight = 13
-    TabOrder = 6
+    TabOrder = 7
   end
   object SupersamplingTB: TTrackBar
     Left = 90
@@ -163,6 +164,17 @@ object Main: TMain
     Position = 10
     TabOrder = 4
     OnChange = SupersamplingTBChange
+  end
+  object DriverAdvanceBtn: TButton
+    Left = 213
+    Top = 132
+    Width = 21
+    Height = 23
+    Caption = '...'
+    Enabled = False
+    TabOrder = 6
+    OnClick = DriverAdvanceBtnClick
+    OnMouseDown = DriverAdvanceBtnMouseDown
   end
   object XPManifest: TXPManifest
     Left = 104

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, XPMan, ComCtrls, Registry, IniFiles;
+  Dialogs, StdCtrls, XPMan, ComCtrls, Registry, IniFiles, ShellAPI;
 
 type
   TMain = class(TForm)
@@ -27,12 +27,17 @@ type
     SupersamplingLbl: TLabel;
     SupersamplingTB: TTrackBar;
     SupersamplingNumLbl: TLabel;
+    DriverAdvanceBtn: TButton;
     procedure ExitBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TrackBarChange(Sender: TObject);
     procedure ApplyBtnClick(Sender: TObject);
     procedure AboutBtnClick(Sender: TObject);
     procedure SupersamplingTBChange(Sender: TObject);
+    procedure ChsDriverCBChange(Sender: TObject);
+    procedure DriverAdvanceBtnClick(Sender: TObject);
+    procedure DriverAdvanceBtnMouseDown(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -43,6 +48,8 @@ var
   Main: TMain;
 
 implementation
+
+uses Unit2, Unit3;
 
 {$R *.dfm}
 
@@ -115,6 +122,7 @@ begin
     if ChsDriverCB.Items.Strings[i] = Copy(DriverName, 1, Length(DriverName) - 4) then
       ChsDriverCB.ItemIndex:=i;
 
+  ChsDriverCBChange(Sender);
 
   if FindFirst(ExtractFilePath(ParamStr(0)) + 'HMDProfiles\*.ini', faAnyFile, SR) = 0 then begin
     repeat
@@ -200,6 +208,30 @@ begin
   if TrackBar.Position <= Screen.MonitorCount then begin
     RendWidthEdt.Text:=IntToStr(Round(Screen.Monitors[TrackBar.Position - 1].Width * SupersamplingTB.Position * 0.1));
     RendHeightEdt.Text:=IntToStr(Round(Screen.Monitors[TrackBar.Position - 1].Height * SupersamplingTB.Position * 0.1));
+  end;
+end;
+
+procedure TMain.ChsDriverCBChange(Sender: TObject);
+begin
+  DriverAdvanceBtn.Enabled:=(ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] = 'Splitter') or (ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] = 'SplitterAdvance');
+end;
+
+procedure TMain.DriverAdvanceBtnClick(Sender: TObject);
+begin
+  if ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] = 'Splitter' then
+    SplitterForm.ShowModal;
+  if ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] = 'SplitterAdvance' then
+    SplitterAdvanceForm.ShowModal;
+end;
+
+procedure TMain.DriverAdvanceBtnMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbRight then begin
+    if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '.ini') then
+        ShellExecute(Handle, nil, PChar(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '.ini'), nil, nil, SW_SHOWNORMAL);
+    if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '64.ini') then
+        ShellExecute(Handle, nil, PChar(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '64.ini'), nil, nil, SW_SHOWNORMAL);
   end;
 end;
 
