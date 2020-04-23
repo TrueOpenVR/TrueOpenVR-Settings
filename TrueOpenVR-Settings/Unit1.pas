@@ -36,8 +36,6 @@ type
     procedure SupersamplingTBChange(Sender: TObject);
     procedure ChsDriverCBChange(Sender: TObject);
     procedure DriverAdvanceBtnClick(Sender: TObject);
-    procedure DriverAdvanceBtnMouseDown(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -222,17 +220,6 @@ begin
     SplitterForm.ShowModal;
   if ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] = 'SplitterAdvance' then
     SplitterAdvanceForm.ShowModal;
-end;
-
-procedure TMain.DriverAdvanceBtnMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  if Button = mbRight then begin
-    if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '.ini') then
-        ShellExecute(Handle, nil, PChar(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '.ini'), nil, nil, SW_SHOWNORMAL);
-    if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '64.ini') then
-        ShellExecute(Handle, nil, PChar(ExtractFilePath(ParamStr(0)) + 'Drivers\' + ChsDriverCB.Items.Strings[ChsDriverCB.ItemIndex] + '64.ini'), nil, nil, SW_SHOWNORMAL);
-  end;
 end;
 
 end.

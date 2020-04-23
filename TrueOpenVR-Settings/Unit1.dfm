@@ -174,7 +174,6 @@ object Main: TMain
     Enabled = False
     TabOrder = 6
     OnClick = DriverAdvanceBtnClick
-    OnMouseDown = DriverAdvanceBtnMouseDown
   end
   object XPManifest: TXPManifest
     Left = 104

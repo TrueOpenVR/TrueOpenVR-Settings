@@ -83,23 +83,39 @@ begin
   Ini.Free;
 end;
 
+function FixArch(DriverName: string): string;
+begin
+  if Copy(DriverName, Length(DriverName) - 1, 2) = '64' then //for only 64 bit drivers
+    Result:=Copy(DriverName, 1, Length(DriverName) - 2)
+  else
+    Result:=DriverName
+end;
+
+function CheckDriver(DriverName: string): string;
+begin
+  if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + FixArch(DriverName) + '.dll') then
+    Result:=FixArch(DriverName)
+  else
+   Result:='Emulation';
+end;
+
 procedure TSplitterAdvanceForm.OkBtnClick(Sender: TObject);
 var
   Ini: TIniFile;
 begin
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Drivers\SplitterAdvance.ini');
-  Ini.WriteString('HMD', 'Position', HMDPosCB.Items.Strings[HMDPosCB.ItemIndex] + '.dll');
-  Ini.WriteString('HMD', 'Rotation', HMDPosCB.Items.Strings[HMDRotCB.ItemIndex] + '.dll');
-  Ini.WriteString('Controllers', 'Position', ControllersPossCB.Items.Strings[ControllersPossCB.ItemIndex] + '.dll');
-  Ini.WriteString('Controllers', 'Rotation', ControllersRotsCB.Items.Strings[ControllersRotsCB.ItemIndex] + '.dll');
-  Ini.WriteString('Controllers', 'Buttons', ControllersBtnsCB.Items.Strings[ControllersBtnsCB.ItemIndex] + '.dll');
+  Ini.WriteString('HMD', 'Position', CheckDriver(FixArch(HMDPosCB.Items.Strings[HMDPosCB.ItemIndex])) + '.dll');
+  Ini.WriteString('HMD', 'Rotation', CheckDriver(FixArch(HMDPosCB.Items.Strings[HMDRotCB.ItemIndex])) + '.dll');
+  Ini.WriteString('Controllers', 'Position', CheckDriver(FixArch(ControllersPossCB.Items.Strings[ControllersPossCB.ItemIndex])) + '.dll');
+  Ini.WriteString('Controllers', 'Rotation', CheckDriver(FixArch(ControllersRotsCB.Items.Strings[ControllersRotsCB.ItemIndex])) + '.dll');
+  Ini.WriteString('Controllers', 'Buttons', CheckDriver(FixArch(ControllersBtnsCB.Items.Strings[ControllersBtnsCB.ItemIndex])) + '.dll');
   Ini.Free;
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Drivers\SplitterAdvance64.ini');
-  Ini.WriteString('HMD', 'Position', HMDPosCB.Items.Strings[HMDPosCB.ItemIndex] + '64.dll');
-  Ini.WriteString('HMD', 'Rotation', HMDPosCB.Items.Strings[HMDRotCB.ItemIndex] + '64.dll');
-  Ini.WriteString('Controllers', 'Position', ControllersPossCB.Items.Strings[ControllersPossCB.ItemIndex] + '64.dll');
-  Ini.WriteString('Controllers', 'Rotation', ControllersRotsCB.Items.Strings[ControllersRotsCB.ItemIndex] + '64.dll');
-  Ini.WriteString('Controllers', 'Buttons', ControllersBtnsCB.Items.Strings[ControllersBtnsCB.ItemIndex] + '64.dll');
+  Ini.WriteString('HMD', 'Position', FixArch(HMDPosCB.Items.Strings[HMDPosCB.ItemIndex]) + '64.dll');
+  Ini.WriteString('HMD', 'Rotation', FixArch(HMDPosCB.Items.Strings[HMDRotCB.ItemIndex]) + '64.dll');
+  Ini.WriteString('Controllers', 'Position', FixArch(ControllersPossCB.Items.Strings[ControllersPossCB.ItemIndex]) + '64.dll');
+  Ini.WriteString('Controllers', 'Rotation', FixArch(ControllersRotsCB.Items.Strings[ControllersRotsCB.ItemIndex]) + '64.dll');
+  Ini.WriteString('Controllers', 'Buttons', FixArch(ControllersBtnsCB.Items.Strings[ControllersBtnsCB.ItemIndex]) + '64.dll');
   Ini.Free;
   Close;
 end;
