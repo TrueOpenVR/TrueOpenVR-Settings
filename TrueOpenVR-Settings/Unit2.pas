@@ -58,17 +58,33 @@ begin
   Ini.Free;
 end;
 
+function FixArch(DriverName: string): string;
+begin
+  if Copy(DriverName, Length(DriverName) - 1, 2) = '64' then //for only 64 bit drivers
+    Result:=Copy(DriverName, 1, Length(DriverName) - 2)
+  else
+    Result:=DriverName
+end;
+
+function CheckDriver(DriverName: string): string;
+begin
+  if FileExists(ExtractFilePath(ParamStr(0)) + 'Drivers\' + FixArch(DriverName) + '.dll') then
+    Result:=FixArch(DriverName)
+  else
+   Result:='Emulation';
+end;
+
 procedure TSplitterForm.OkBtnClick(Sender: TObject);
 var
   Ini: TIniFile;
 begin
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Drivers\Splitter.ini');
-  Ini.WriteString('Drivers', 'HMD', HMDCB.Items.Strings[HMDCB.ItemIndex] + '.dll');
-  Ini.WriteString('Drivers', 'Controllers', ControllersCB.Items.Strings[ControllersCB.ItemIndex] + '.dll');
+  Ini.WriteString('Drivers', 'HMD', CheckDriver(FixArch(HMDCB.Items.Strings[HMDCB.ItemIndex])) + '.dll');
+  Ini.WriteString('Drivers', 'Controllers', CheckDriver(FixArch(ControllersCB.Items.Strings[ControllersCB.ItemIndex])) + '.dll');
   Ini.Free;
   Ini:=TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Drivers\Splitter64.ini');
-  Ini.WriteString('Drivers', 'HMD', HMDCB.Items.Strings[HMDCB.ItemIndex] + '64.dll');
-  Ini.WriteString('Drivers', 'Controllers', ControllersCB.Items.Strings[ControllersCB.ItemIndex] + '64.dll');
+  Ini.WriteString('Drivers', 'HMD', FixArch(HMDCB.Items.Strings[HMDCB.ItemIndex]) + '64.dll');
+  Ini.WriteString('Drivers', 'Controllers', FixArch(ControllersCB.Items.Strings[ControllersCB.ItemIndex]) + '64.dll');
   Ini.Free;
   Close;
 end;
